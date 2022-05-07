@@ -1,4 +1,5 @@
 import { readKeypress, green, cursorUp } from './deps.ts';
+import { print } from './utils/io.ts';
 
 const defaultOpts = {};
 export async function select(_opts: {
@@ -9,8 +10,16 @@ export async function select(_opts: {
   if (_opts.options.length == 0) throw 'select requires non empty list of options';
 
   const opts = Object.assign({}, _opts, defaultOpts);
-  console.log(`${green('?')} ${opts.message}`);
+  const { options } = opts;
+  const len = options.length;
   let idx = 0;
+  if (opts.default) {
+    const { default: dft } = opts;
+    idx = options.indexOf(dft);
+    if (idx == -1)
+      throw `Default option ${dft} is not included in option list`;
+  }
+  console.log(`${green('?')} ${opts.message}`);
   const printOptions = () => {
     for (const [i, opt] of opts.options.entries()) {
       const selected = idx == i;
@@ -20,17 +29,15 @@ export async function select(_opts: {
     }
   };
 
-  const { options } = opts;
-  const len = options.length;
   printOptions();
   for await (const evt of readKeypress()) {
     const { key, ctrlKey } = evt;
     if (key == 'down') {
-      console.log(cursorUp(len + 1));
+      print(cursorUp(len));
       idx = (idx + 1) % len;
       printOptions();
     } else if (key == 'up') {
-      console.log(cursorUp(len + 1));
+      await print(cursorUp(len));
       idx = (idx - 1 + len) % len;
       printOptions();
     } else if (key == 'return') {

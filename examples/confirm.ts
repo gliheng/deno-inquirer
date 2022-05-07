@@ -1,3 +1,5 @@
+#!/usr/bin/env -S deno run --unstable --allow-env
+
 import { confirm } from '../mod.ts';
 
 let ret;

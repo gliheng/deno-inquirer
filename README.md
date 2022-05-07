@@ -1,4 +1,4 @@
-# Deno Inquirer
+# Inquirer
 
 Interactive command line user interfaces for deno.
 

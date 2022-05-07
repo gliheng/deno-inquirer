@@ -1,4 +1,5 @@
 import { gray, green, readLines } from './deps.ts';
+import { print } from './utils/io.ts';
 
 const defaultOpts = {
   default: true,
@@ -10,10 +11,8 @@ export async function confirm(_opts: {
 }) {
   const opts = Object.assign({}, defaultOpts, _opts);
   const choice = opts.default ? 'Y/n' : 'y/N';
-  const s = `${green('?')} ${opts.message} ${gray(choice)} `;
-  const text = new TextEncoder().encode(s);
-  await Deno.write(Deno.stdout.rid, text);
-
+  const prompt = `${green('?')} ${opts.message} ${gray(choice)} `;
+  await print(prompt);
   const ret = await readLines(Deno.stdin).next();
   const c = ret.value.toLowerCase();
   if (c) {
