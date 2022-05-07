@@ -3,7 +3,7 @@
 Interactive command line user interfaces for deno.
 
 
-`This lib requires --unstable --allow-env flag to run`
+> This lib requires `--unstable --allow-env` flag to run
 
 ## confirm
 

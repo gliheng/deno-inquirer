@@ -1,4 +1,4 @@
-import { gray, green, readLines } from './deps.ts';
+import { color, readLines } from './deps.ts';
 import { print } from './utils/io.ts';
 
 const defaultOpts = {
@@ -11,7 +11,7 @@ export async function confirm(_opts: {
 }) {
   const opts = Object.assign({}, defaultOpts, _opts);
   const choice = opts.default ? 'Y/n' : 'y/N';
-  const prompt = `${green('?')} ${opts.message} ${gray(choice)} `;
+  const prompt = `${color.green('?')} ${opts.message} ${color.gray(choice)} `;
   await print(prompt);
   const ret = await readLines(Deno.stdin).next();
   const c = ret.value.toLowerCase();

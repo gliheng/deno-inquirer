@@ -16,15 +16,15 @@ ret = await select({
 console.log('Your choice', ret);
 
 ret = await select({
-    message: 'Which pet do you prefer',
-    default: 'Dog',
-    options: [
-      'Cat',
-      'Dog',
-      'Hamster',
-      'Parrot',
-    ],
-  });
+  message: 'Which pet do you prefer',
+  default: 'Dog',
+  options: [
+    'Cat',
+    'Dog',
+    'Hamster',
+    'Parrot',
+  ],
+});
   
-  console.log('Your choice', ret);
+console.log('Your choice', ret);
   
