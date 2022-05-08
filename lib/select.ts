@@ -1,30 +1,55 @@
-import { readKeypress, color, ansi } from './deps.ts';
-import { print } from './utils/io.ts';
+import { readKeypress, color, ansi } from '../deps.ts';
+import { print, eraseLines } from './utils/io.ts';
 
 const defaultOpts = {};
+
+type OptionValue = string | symbol | number | boolean;
+interface Option {
+  label: string;
+  value: OptionValue;
+}
+
+export async function select(_opts: {
+  message: string;
+  options: Option[];
+  default?: OptionValue;
+}): Promise<OptionValue>;
 export async function select(_opts: {
   message: string;
   options: string[];
   default?: string;
-}) {
+}): Promise<string>;
+export async function select(_opts: {
+  message: string;
+  options: unknown[];
+  default?: unknown;
+}): Promise<unknown> {
   if (_opts.options.length == 0) throw 'select requires non empty list of options';
 
   const opts = Object.assign({}, _opts, defaultOpts);
   const { options } = opts;
-  const len = options.length;
+  // Normalize options
+  let optionList: Option[];
+  if (typeof options[0] == 'string') {
+    optionList = (options as string[]).map(e => ({label: e, value: e}));
+  } else {
+    optionList = options as Option[];
+  }
+
+  const len = optionList.length;
   let idx = 0;
   if (opts.default) {
     const { default: dft } = opts;
-    idx = options.indexOf(dft);
+    idx = optionList.findIndex(e => dft == e.value);
     if (idx == -1)
       throw `Default option ${dft} is not included in option list`;
   }
   console.log(`${color.green('?')} ${opts.message}`);
   const printOptions = () => {
-    for (const [i, opt] of opts.options.entries()) {
+    for (const [i, opt] of optionList.entries()) {
       const selected = idx == i;
       const selChar = selected ? '❯' : ' ';
-      const s = `${selChar} ${opt}`;
+      const s = `${selChar} ${opt.label}`;
       console.log(selected ? color.green(s) : s);
     }
   };
@@ -35,6 +60,7 @@ export async function select(_opts: {
 
   await print(ansi.cursorHide());
   printOptions();
+  let ret;
   for await (const evt of readKeypress()) {
     const { key, ctrlKey } = evt;
     if (key == 'down') {
@@ -46,27 +72,15 @@ export async function select(_opts: {
       await eraseOptions();      
       printOptions();
     } else if (key == 'return') {
-      await eraseOptions();
-      await print(ansi.cursorShow());
-      return options[idx];
+      ret = optionList[idx].value;
+      break;
     } else if (ctrlKey && key === 'c') {
-      await eraseOptions();
-      await print(ansi.cursorShow());
-      throw 'Noop';
+      break;
     }
   }
-}
-// This PR https://github.com/justjavac/deno_ansi/pull/1 fixes upstream
-function eraseLines(count: number) {
-	let clear = '';
 
-	for (let i = 0; i < count; i++) {
-		clear += ansi.eraseLine() + (i < count - 1 ? ansi.cursorUp() : '');
-	}
-
-  if (count) {
-    clear += ansi.cursorHorizontal();
-  }
-
-	return clear;
+  await eraseOptions();
+  await print(ansi.cursorShow());
+  if (ret) return ret;
+  throw 'Noop';
 }

@@ -8,7 +8,7 @@ Interactive command line user interfaces for deno.
 ## confirm
 
 ```ts
-import { confirm } from '../mod.ts';
+import { confirm } from 'https://deno.land/x/inquirer/mod.ts';
 
 let ret = await confirm({
   message: 'Would you like a cup of ☕?',
@@ -17,7 +17,7 @@ let ret = await confirm({
 
 ## select
 ```ts
-import { select } from '../mod.ts';
+import { select } from 'https://deno.land/x/inquirer/mod.ts';
 
 let ret = await select({
   message: 'Which is your favorite fruit',

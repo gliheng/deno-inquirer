@@ -1,4 +1,4 @@
-import { color, readLines } from './deps.ts';
+import { color, readLines } from '../deps.ts';
 import { print } from './utils/io.ts';
 
 const defaultOpts = {
