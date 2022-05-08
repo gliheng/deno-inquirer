@@ -74,7 +74,7 @@ export async function select(_opts: {
       ret = optionList[idx].value;
       break;
     } else if (ctrlKey && key === 'c') {
-      break;
+      Deno.exit()
     }
   }
 

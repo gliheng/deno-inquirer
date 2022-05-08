@@ -4,6 +4,5 @@
 ** DONE input api
 ** DONE select support complex value
 ** api refactor
-** checkbox api
 ** progress api
 ** windows compat
