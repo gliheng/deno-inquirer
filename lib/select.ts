@@ -3,17 +3,16 @@ import { print, eraseLines } from './utils/io.ts';
 
 const defaultOpts = {};
 
-type OptionValue = string | symbol | number | boolean;
-interface Option {
+interface Option<T> {
   label: string;
-  value: OptionValue;
+  value: T;
 }
 
-export async function select(_opts: {
+export async function select<T>(_opts: {
   message: string;
-  options: Option[];
-  default?: OptionValue;
-}): Promise<OptionValue>;
+  options: Option<T>[];
+  default?: T;
+}): Promise<T>;
 export async function select(_opts: {
   message: string;
   options: string[];
@@ -29,11 +28,11 @@ export async function select(_opts: {
   const opts = Object.assign({}, _opts, defaultOpts);
   const { options } = opts;
   // Normalize options
-  let optionList: Option[];
+  let optionList: Option<unknown>[];
   if (typeof options[0] == 'string') {
     optionList = (options as string[]).map(e => ({label: e, value: e}));
   } else {
-    optionList = options as Option[];
+    optionList = options as Option<unknown>[];
   }
 
   const len = optionList.length;
