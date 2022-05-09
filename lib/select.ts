@@ -25,7 +25,7 @@ export async function select(_opts: {
 }): Promise<unknown> {
   if (_opts.options.length == 0) throw 'select requires non empty list of options';
 
-  const opts = Object.assign({}, _opts, defaultOpts);
+  const opts = Object.assign({}, defaultOpts, _opts);
   const { options } = opts;
   // Normalize options
   let optionList: Option<unknown>[];
