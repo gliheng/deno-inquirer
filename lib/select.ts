@@ -1,5 +1,5 @@
 import { readKeypress, color, ansi } from '../deps.ts';
-import { print, eraseLines } from './utils/io.ts';
+import { print } from './utils/io.ts';
 
 const defaultOpts = {};
 
@@ -54,7 +54,7 @@ export async function select(_opts: {
   };
 
   const eraseOptions = async () => {
-    await print(eraseLines(len + 1));
+    await print(ansi.eraseLines(len + 1));
   };
 
   await print(ansi.cursorHide());
