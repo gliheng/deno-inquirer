@@ -1,11 +1,12 @@
-import { color } from '../deps.ts';
-import { print, eraseLines } from './utils/io.ts';
+import { color, ansi } from '../deps.ts';
+import { print } from './utils/io.ts';
 import { deferred } from './utils/async.ts';
 
 type ProgressStyle = 'bar' | 'spinner';
 
 const defaultOpts = {
   style: 'bar',
+  barChar: '▉',
 };
 
 const spinnerList = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
@@ -22,23 +23,26 @@ export function progress<T>(_opts: {
   const opts = Object.assign({}, defaultOpts, _opts);
   const { style } = opts;
   let i = 0;
+  let p = 0;
   const render = () => {
     if (i != 0) {
-      print(eraseLines(1));
+      print(ansi.eraseLines(1));
     }
+    print(opts.message + ' ');
     if (style == 'spinner') {
-      print(spinnerList[i % spinnerList.length] + ' ');
+      print(spinnerList[i % spinnerList.length]);
     } else if (style == 'bar') {
-      const barSize = 50;
-      const total = 80;
-      const label = `${i}%`;
-      const bar = "#".repeat(Math.round(i/100 * barSize));
+      const total = 60;
+      const barSize = 40;
+      const label = `${p}%`;
+      const bar = opts.barChar.repeat(Math.round(p/100 * barSize));
       print('[' + color.red(bar) + ' '.repeat(barSize - bar.length) + ']' + ' '.repeat(total - barSize - label.length) + label);
     }
+    i++;
   };
 
   const done = (v?: T) => {
-    i = 100;
+    p = 100;
     render();
     print("\n");
     if (spinTimer) {
@@ -47,8 +51,8 @@ export function progress<T>(_opts: {
     }
     ret.resolve(v);
   };
-  const progress = (p: number) => {
-    i = Math.min(p, 100);
+  const progress = (pct: number) => {
+    p = Math.min(pct, 100);
     render();
   };
 
@@ -56,14 +60,10 @@ export function progress<T>(_opts: {
     progress, done,
   });
 
-  console.log(opts.message);
   let spinTimer: ReturnType<typeof setInterval>;
   // print(ansi.cursorHide());
   if (style == 'spinner') {
-    spinTimer = setInterval(() => {
-      render();
-      i++;
-    }, 250);
+    spinTimer = setInterval(render, 250);
   }
   render();
   return ret.promise;

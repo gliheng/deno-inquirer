@@ -1,3 +1,5 @@
+#!/usr/bin/env -S deno run --unstable --allow-env
+
 import { progress } from '../mod.ts';
 
 await progress({
