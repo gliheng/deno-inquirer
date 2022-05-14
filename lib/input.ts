@@ -8,7 +8,7 @@ export async function input(_opts: {
   message: string;
   default?: string;
 }) {
-  const opts = Object.assign({}, _opts, defaultOpts);
+  const opts = Object.assign({}, defaultOpts, _opts);
   const { default: dft } = opts;
   const prompt = [color.green('?'), opts.message];
   if (dft) {
